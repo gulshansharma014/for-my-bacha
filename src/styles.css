@@ -639,3 +639,212 @@ footer a {
   .polaroid { transform: rotate(0); }
   .timeline-item { grid-template-columns: 52px 1fr; gap: 12px; }
 }
+
+/* =========================================
+   VERSION 3 — TYPEWRITER LETTER & FINALE
+========================================= */
+
+.typewriter-letter {
+  min-height: 680px;
+  overflow: hidden;
+  transform-origin: center top;
+  box-shadow:
+    0 30px 80px rgba(89, 40, 54, 0.14),
+    0 2px 0 rgba(255, 255, 255, 0.9) inset;
+}
+
+.typewriter-letter::after {
+  content: "";
+  position: absolute;
+  inset: 14px;
+  border: 1px solid rgba(145, 47, 75, 0.08);
+  pointer-events: none;
+}
+
+.typewriter-copy {
+  min-height: 495px;
+}
+
+.typewriter-copy p {
+  margin-bottom: 1.15rem;
+}
+
+.typewriter-cursor {
+  display: inline-block;
+  margin-left: 2px;
+  color: var(--rose);
+  animation: typewriterBlink 0.72s steps(1) infinite;
+}
+
+.letter-start-hint {
+  position: absolute;
+  right: 30px;
+  bottom: 18px;
+  margin: 0;
+  color: rgba(145, 47, 75, 0.55);
+  font-size: 1rem !important;
+}
+
+@keyframes typewriterBlink {
+  0%, 48% { opacity: 1; }
+  49%, 100% { opacity: 0; }
+}
+
+.cinematic-finale {
+  position: fixed;
+  inset: 0;
+  z-index: 100000;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  color: white;
+  background:
+    radial-gradient(circle at 50% 82%, rgba(180, 76, 126, 0.38), transparent 32%),
+    radial-gradient(circle at 20% 15%, rgba(87, 80, 161, 0.26), transparent 26%),
+    linear-gradient(180deg, #080719 0%, #151329 44%, #38203e 74%, #6d304e 100%);
+}
+
+.cinematic-finale::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  opacity: 0.72;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(255,255,255,.95) 1px, transparent 1.4px),
+    radial-gradient(circle, rgba(255,255,255,.5) 1px, transparent 1.4px);
+  background-position: 0 0, 31px 37px;
+  background-size: 78px 78px, 113px 113px;
+  animation: cinematicStars 18s linear infinite;
+}
+
+.cinematic-vignette {
+  position: fixed;
+  inset: 0;
+  z-index: 2;
+  pointer-events: none;
+  box-shadow: inset 0 0 170px rgba(0, 0, 0, 0.62);
+}
+
+.cinematic-finale-content {
+  position: relative;
+  z-index: 5;
+  display: flex;
+  width: min(760px, calc(100% - 36px));
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 85px 0 70px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+
+.cinematic-finale-content > p {
+  margin-bottom: 10px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.2rem, 3vw, 1.75rem);
+  line-height: 1.45;
+  color: rgba(255, 244, 248, 0.92);
+}
+
+.cinematic-finale-content .cinematic-opening {
+  margin-bottom: 22px;
+  font-size: clamp(2rem, 6vw, 4.3rem);
+  font-style: italic;
+  color: #ffd5e1;
+}
+
+.cinematic-photo-frame {
+  width: min(330px, 78vw);
+  margin: 42px auto 32px;
+  padding: 10px 10px 42px;
+  background: #fffaf4;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.42);
+}
+
+.cinematic-photo-frame img {
+  width: 100%;
+  max-height: 390px;
+  object-fit: cover;
+}
+
+.cinematic-finale-content h2 {
+  margin-bottom: 28px;
+  font-size: clamp(2.5rem, 8vw, 5.3rem);
+  text-shadow: 0 10px 32px rgba(0, 0, 0, 0.3);
+}
+
+.cinematic-finale-content h2 span {
+  display: block;
+  margin-top: 10px;
+  color: #ffd2df;
+  font-family: "Caveat", cursive;
+  font-size: 0.55em;
+  font-weight: 400;
+}
+
+.cinematic-ending-copy {
+  margin-top: 4px;
+}
+
+.cinematic-ending-copy p {
+  margin-bottom: 8px;
+  font-family: "Playfair Display", serif;
+  font-size: clamp(1.8rem, 5vw, 3rem);
+}
+
+.cinematic-ending-copy small {
+  display: block;
+  max-width: 520px;
+  color: rgba(255, 238, 245, 0.78);
+  font-family: "Caveat", cursive;
+  font-size: clamp(1.25rem, 3.5vw, 1.8rem);
+  line-height: 1.45;
+}
+
+.cinematic-close {
+  margin-top: 38px;
+  padding: 13px 22px;
+  border: 1px solid rgba(255,255,255,.28);
+  border-radius: 999px;
+  color: white;
+  background: rgba(255,255,255,.1);
+  box-shadow: 0 12px 35px rgba(0,0,0,.18);
+  backdrop-filter: blur(10px);
+}
+
+.cinematic-close:hover {
+  background: rgba(255,255,255,.18);
+  transform: translateY(-2px);
+}
+
+@keyframes cinematicStars {
+  from { transform: translateY(0); }
+  to { transform: translateY(45px); }
+}
+
+@media (max-width: 600px) {
+  .typewriter-letter {
+    min-height: 790px;
+  }
+
+  .typewriter-copy {
+    min-height: 610px;
+  }
+
+  .cinematic-finale-content {
+    width: min(100% - 28px, 760px);
+    padding-top: 70px;
+  }
+
+  .cinematic-photo-frame {
+    margin-top: 34px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .typewriter-cursor,
+  .cinematic-finale::before {
+    animation: none !important;
+  }
+}

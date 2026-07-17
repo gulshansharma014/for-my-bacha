@@ -184,6 +184,186 @@ function ShootingStars() {
   );
 }
 
+
+const letterParagraphs = [
+  "I am truly sorry—not only because you became upset, but because I understand why my words hurt you.",
+  "You trusted me with your love, emotions, closeness and the most vulnerable parts of yourself. That trust should always feel safe with me.",
+  "I never want you to think that I take our relationship or our intimacy lightly. Every moment between us matters to me because it belongs to us.",
+  "I know saying ‘I did not mean it that way’ cannot erase how it made you feel. Instead of asking you to simply forget it, I want to show you that I have understood it.",
+  "I will think before speaking. I will be more sensitive. I will not use humour in a way that makes you question your importance in my life.",
+  "I love you more seriously, deeply and genuinely than my silly words sometimes manage to express.",
+];
+
+function TypewriterLetter() {
+  const letterRef = useRef(null);
+  const [started, setStarted] = useState(false);
+  const [visibleCharacters, setVisibleCharacters] = useState(0);
+  const completeText = letterParagraphs.join("\n\n");
+
+  useEffect(() => {
+    const node = letterRef.current;
+
+    if (!node) {
+      return undefined;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setStarted(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.25 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!started || visibleCharacters >= completeText.length) {
+      return undefined;
+    }
+
+    const currentCharacter = completeText[visibleCharacters];
+    const pause = currentCharacter === "." ? 115 : currentCharacter === "," ? 65 : 24;
+    const timer = window.setTimeout(
+      () => setVisibleCharacters((current) => current + 1),
+      pause
+    );
+
+    return () => window.clearTimeout(timer);
+  }, [completeText, started, visibleCharacters]);
+
+  const visibleText = completeText.slice(0, visibleCharacters);
+  const visibleParagraphs = visibleText.split("\n\n");
+  const isComplete = visibleCharacters >= completeText.length;
+
+  return (
+    <motion.div
+      ref={letterRef}
+      className="letter typewriter-letter"
+      initial={{ rotate: -3, opacity: 0, y: 35 }}
+      whileInView={{ rotate: -0.6, opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 1 }}
+      animate={{ y: [0, -3, 0] }}
+    >
+      <h2>Dear Bacha,</h2>
+
+      <div className="typewriter-copy" aria-live="polite">
+        {visibleParagraphs.map((paragraph, index) => (
+          <p key={`${index}-${paragraph.slice(0, 12)}`}>
+            {paragraph}
+            {!isComplete && index === visibleParagraphs.length - 1 && (
+              <span className="typewriter-cursor" aria-hidden="true">|</span>
+            )}
+          </p>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {isComplete && (
+          <motion.p
+            className="letter-sign"
+            initial={{ opacity: 0, y: 14 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            Always yours,
+            <br />
+            Your Nadan Boyfriend ❤️
+          </motion.p>
+        )}
+      </AnimatePresence>
+
+      {!started && <p className="letter-start-hint">Scroll a little closer…</p>}
+    </motion.div>
+  );
+}
+
+function CinematicFinale({ onClose }) {
+  const lines = [
+    "Thank you…",
+    "For staying.",
+    "For trusting me.",
+    "For choosing me.",
+    "For loving your Nadan Boyfriend.",
+  ];
+
+  return (
+    <motion.div
+      className="cinematic-finale"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 1.1 }}
+    >
+      <ShootingStars />
+      <div className="cinematic-vignette" />
+
+      <motion.div
+        className="cinematic-finale-content"
+        initial={{ opacity: 0, scale: 0.96 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.55, duration: 1 }}
+      >
+        {lines.map((line, index) => (
+          <motion.p
+            key={line}
+            className={index === 0 ? "cinematic-opening" : ""}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 1.1 + index * 0.75, duration: 0.8 }}
+          >
+            {line}
+          </motion.p>
+        ))}
+
+        <motion.div
+          className="cinematic-photo-frame"
+          initial={{ opacity: 0, scale: 0.82, rotate: -4 }}
+          animate={{ opacity: 1, scale: 1, rotate: -1 }}
+          transition={{ delay: 5.2, duration: 1.2, type: "spring" }}
+        >
+          <img src={mirrorPhoto} alt="A favourite memory together" />
+        </motion.div>
+
+        <motion.h2
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 6.1, duration: 1 }}
+        >
+          I still choose you.
+          <span>Every single day.</span>
+        </motion.h2>
+
+        <motion.div
+          className="cinematic-ending-copy"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 7.25, duration: 1.2 }}
+        >
+          <p>The End.</p>
+          <small>…or hopefully, just another beautiful beginning.</small>
+        </motion.div>
+
+        <motion.button
+          type="button"
+          className="cinematic-close"
+          onClick={onClose}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 8.2 }}
+        >
+          Return to our story ♥
+        </motion.button>
+      </motion.div>
+    </motion.div>
+  );
+}
+
 function App() {
   const [envelopeOpened, setEnvelopeOpened] = useState(false);
   const [storyStarted, setStoryStarted] = useState(false);
@@ -208,6 +388,7 @@ function App() {
 
   const [isLoading, setIsLoading] = useState(true);
   const [showMusicInvite, setShowMusicInvite] = useState(false);
+  const [showFinale, setShowFinale] = useState(false);
   const audioRef = useRef(null);
   const microphoneCleanupRef = useRef(null);
 
@@ -421,6 +602,18 @@ function App() {
         "Microphone permission was unavailable. Tap the cake instead 💗"
       );
     }
+  };
+
+  const handleYes = () => {
+    setAnswer("yes");
+
+    if (navigator.vibrate) {
+      navigator.vibrate([90, 45, 140]);
+    }
+
+    window.setTimeout(() => {
+      setShowFinale(true);
+    }, 900);
   };
 
   const scrapbookMemory = memories[scrapbookPage];
@@ -1079,15 +1272,6 @@ function App() {
   )}
 </AnimatePresence>
 
-{/* Existing Music Button */}
-
-<button
-    className="music-toggle"
-    onClick={toggleMusic}
->
-...
-</button>
-
           <motion.button
             className="v2-music-button"
             onClick={toggleMusic}
@@ -1658,55 +1842,7 @@ function App() {
             <div className="content letter-wrap">
               <p className="eyebrow centered">A letter from my heart</p>
 
-              <motion.div
-                className="letter"
-                initial={{ rotate: -3 }}
-                whileInView={{ rotate: -0.6 }}
-                viewport={{ once: true }}
-                transition={{ duration: 1 }}
-              >
-                <h2>Dear Bacha,</h2>
-
-                <p>
-                  I am truly sorry—not only because you became upset, but
-                  because I understand why my words hurt you.
-                </p>
-
-                <p>
-                  You trusted me with your love, emotions, closeness and the
-                  most vulnerable parts of yourself. That trust should always
-                  feel safe with me.
-                </p>
-
-                <p>
-                  I never want you to think that I take our relationship or our
-                  intimacy lightly. Every moment between us matters to me
-                  because it belongs to us.
-                </p>
-
-                <p>
-                  I know saying “I did not mean it that way” cannot erase how it
-                  made you feel. Instead of asking you to simply forget it, I
-                  want to show you that I have understood it.
-                </p>
-
-                <p>
-                  I will think before speaking. I will be more sensitive. I
-                  will not use humour in a way that makes you question your
-                  importance in my life.
-                </p>
-
-                <p>
-                  I love you more seriously, deeply and genuinely than my silly
-                  words sometimes manage to express.
-                </p>
-
-                <p className="letter-sign">
-                  Always yours,
-                  <br />
-                  Your Nadan Boyfriend ❤️
-                </p>
-              </motion.div>
+              <TypewriterLetter />
             </div>
           </Section>
 
@@ -1784,7 +1920,7 @@ function App() {
               <div className="v2-angry-zone">
                 <motion.button
                   className="primary-button"
-                  onClick={() => setAnswer("yes")}
+                  onClick={handleYes}
                   whileHover={{
                     scale: 1.05,
                   }}
@@ -2054,6 +2190,12 @@ function App() {
               </motion.p>
             </div>
           </section>
+
+          <AnimatePresence>
+            {showFinale && (
+              <CinematicFinale onClose={() => setShowFinale(false)} />
+            )}
+          </AnimatePresence>
 
           {answer === "yes" && (
             <div className="v2-success-hearts">
