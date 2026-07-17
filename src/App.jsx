@@ -185,6 +185,79 @@ function ShootingStars() {
 }
 
 
+function Fireflies({ count = 18 }) {
+  const particles = useMemo(
+    () =>
+      Array.from({ length: count }, (_, index) => ({
+        id: index,
+        left: `${(index * 37) % 96}%`,
+        top: `${8 + ((index * 29) % 82)}%`,
+        delay: `${(index % 8) * 0.65}s`,
+        duration: `${5.5 + (index % 6) * 0.8}s`,
+        drift: `${18 + (index % 5) * 9}px`,
+      })),
+    [count]
+  );
+
+  return (
+    <div className="v4-fireflies" aria-hidden="true">
+      {particles.map((particle) => (
+        <span
+          key={particle.id}
+          style={{
+            left: particle.left,
+            top: particle.top,
+            animationDelay: particle.delay,
+            animationDuration: particle.duration,
+            "--firefly-drift": particle.drift,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function HeartCursor() {
+  const [position, setPosition] = useState({ x: -100, y: -100 });
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    if (!window.matchMedia("(pointer: fine)").matches) {
+      return undefined;
+    }
+
+    const move = (event) => {
+      setPosition({ x: event.clientX, y: event.clientY });
+      setVisible(true);
+    };
+    const hide = () => setVisible(false);
+
+    window.addEventListener("pointermove", move);
+    document.documentElement.addEventListener("mouseleave", hide);
+
+    return () => {
+      window.removeEventListener("pointermove", move);
+      document.documentElement.removeEventListener("mouseleave", hide);
+    };
+  }, []);
+
+  return (
+    <motion.div
+      className="v4-heart-cursor"
+      aria-hidden="true"
+      animate={{
+        x: position.x - 9,
+        y: position.y - 9,
+        opacity: visible ? 0.7 : 0,
+      }}
+      transition={{ type: "spring", stiffness: 700, damping: 38, mass: 0.18 }}
+    >
+      ♥
+    </motion.div>
+  );
+}
+
+
 const letterParagraphs = [
   "I am truly sorry—not only because you became upset, but because I understand why my words hurt you.",
   "You trusted me with your love, emotions, closeness and the most vulnerable parts of yourself. That trust should always feel safe with me.",
@@ -294,20 +367,57 @@ function CinematicFinale({ onClose }) {
 
   return (
     <motion.div
-      className="cinematic-finale"
+      className="cinematic-finale v4-cinematic-finale"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1.1 }}
     >
       <ShootingStars />
+      <Fireflies count={28} />
       <div className="cinematic-vignette" />
 
       <motion.div
-        className="cinematic-finale-content"
+        className="v4-heartbeat-intro"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: [0, 1, 1, 0] }}
+        transition={{ duration: 3.7, times: [0, 0.15, 0.78, 1] }}
+      >
+        <motion.span
+          animate={{ scale: [1, 1.35, 1, 1.35, 1] }}
+          transition={{ duration: 2.2, delay: 0.45, ease: "easeInOut" }}
+        >
+          ♥
+        </motion.span>
+        <motion.p
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 1.35, duration: 0.7 }}
+        >
+          Bacha… I have one last thing to say.
+        </motion.p>
+      </motion.div>
+
+      <motion.div
+        className="v4-love-reveal"
+        initial={{ opacity: 0, scale: 0.7, filter: "blur(18px)" }}
+        animate={{
+          opacity: [0, 1, 1, 0],
+          scale: [0.7, 1.05, 1, 1.12],
+          filter: ["blur(18px)", "blur(0px)", "blur(0px)", "blur(8px)"],
+        }}
+        transition={{ delay: 3.75, duration: 3.25, times: [0, 0.25, 0.78, 1] }}
+      >
+        <span>❤️</span>
+        <strong>I LOVE YOU</strong>
+        <span>❤️</span>
+      </motion.div>
+
+      <motion.div
+        className="cinematic-finale-content v4-finale-story"
         initial={{ opacity: 0, scale: 0.96 }}
         animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.55, duration: 1 }}
+        transition={{ delay: 7.1, duration: 1.1 }}
       >
         {lines.map((line, index) => (
           <motion.p
@@ -315,7 +425,7 @@ function CinematicFinale({ onClose }) {
             className={index === 0 ? "cinematic-opening" : ""}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 1.1 + index * 0.75, duration: 0.8 }}
+            transition={{ delay: 7.7 + index * 0.62, duration: 0.75 }}
           >
             {line}
           </motion.p>
@@ -325,15 +435,16 @@ function CinematicFinale({ onClose }) {
           className="cinematic-photo-frame"
           initial={{ opacity: 0, scale: 0.82, rotate: -4 }}
           animate={{ opacity: 1, scale: 1, rotate: -1 }}
-          transition={{ delay: 5.2, duration: 1.2, type: "spring" }}
+          transition={{ delay: 11.1, duration: 1.2, type: "spring" }}
         >
+          <div className="v4-photo-shine" />
           <img src={mirrorPhoto} alt="A favourite memory together" />
         </motion.div>
 
         <motion.h2
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 6.1, duration: 1 }}
+          transition={{ delay: 12.05, duration: 1 }}
         >
           I still choose you.
           <span>Every single day.</span>
@@ -343,7 +454,7 @@ function CinematicFinale({ onClose }) {
           className="cinematic-ending-copy"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 7.25, duration: 1.2 }}
+          transition={{ delay: 13.15, duration: 1.2 }}
         >
           <p>The End.</p>
           <small>…or hopefully, just another beautiful beginning.</small>
@@ -355,7 +466,7 @@ function CinematicFinale({ onClose }) {
           onClick={onClose}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 8.2 }}
+          transition={{ delay: 14.1 }}
         >
           Return to our story ♥
         </motion.button>
@@ -389,6 +500,7 @@ function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showMusicInvite, setShowMusicInvite] = useState(false);
   const [showFinale, setShowFinale] = useState(false);
+  const [scrollProgress, setScrollProgress] = useState(0);
   const audioRef = useRef(null);
   const microphoneCleanupRef = useRef(null);
 
@@ -399,6 +511,48 @@ function App() {
 
   return () => window.clearTimeout(loadingTimer);
 }, []);
+
+  useEffect(() => {
+    const updateProgress = () => {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      setScrollProgress(scrollable > 0 ? window.scrollY / scrollable : 0);
+    };
+
+    updateProgress();
+    window.addEventListener("scroll", updateProgress, { passive: true });
+    window.addEventListener("resize", updateProgress);
+
+    return () => {
+      window.removeEventListener("scroll", updateProgress);
+      window.removeEventListener("resize", updateProgress);
+    };
+  }, [storyStarted]);
+
+  useEffect(() => {
+    const audio = audioRef.current;
+
+    if (!audio || !musicPlaying || !showFinale) {
+      return undefined;
+    }
+
+    const originalVolume = audio.volume;
+    audio.volume = 0.16;
+
+    const swellTimer = window.setTimeout(() => {
+      const swell = window.setInterval(() => {
+        if (audio.volume < 0.54) {
+          audio.volume = Math.min(0.55, audio.volume + 0.025);
+          return;
+        }
+        window.clearInterval(swell);
+      }, 90);
+    }, 3500);
+
+    return () => {
+      window.clearTimeout(swellTimer);
+      audio.volume = Math.min(originalVolume || 0.35, 0.35);
+    };
+  }, [musicPlaying, showFinale]);
 
   useEffect(() => {
     return () => {
@@ -619,7 +773,9 @@ function App() {
   const scrapbookMemory = memories[scrapbookPage];
 
   return (
-    <main>
+    <main style={{ "--story-progress": scrollProgress }}>
+      <HeartCursor />
+      <div className="v4-scroll-progress" aria-hidden="true" />
       <AnimatePresence mode="wait">
   {isLoading && (
     <motion.div
@@ -1510,7 +1666,7 @@ function App() {
               <motion.img
                 src={childhoodPhoto}
                 alt="A childhood photograph"
-                className="childhood-single"
+                className="childhood-single v4-premium-photo"
                 whileHover={{
                   rotate: 2,
                   scale: 1.02,
@@ -1534,7 +1690,7 @@ function App() {
               <motion.img
                 src={childhoodFrame}
                 alt="The framed combined childhood photographs"
-                className="frame-photo"
+                className="frame-photo v4-premium-photo"
                 whileHover={{
                   rotate: -1,
                   scale: 1.02,
@@ -1705,6 +1861,7 @@ function App() {
               <div className="v2-cake-wrap">
                 <motion.img
                   src={birthdayCake}
+                  className="v4-premium-photo"
                   alt="The birthday cake she made"
                   onClick={() => setCandlesOut((current) => !current)}
                   animate={
@@ -1784,6 +1941,7 @@ function App() {
             <div className="content home-layout">
               <motion.img
                 src={together}
+                className="v4-premium-photo"
                 alt="A peaceful moment together on the grass"
                 whileHover={{
                   scale: 1.02,
@@ -1882,6 +2040,7 @@ function App() {
             <div className="content final-photo-layout">
               <motion.img
                 src={mirrorPhoto}
+                className="v4-premium-photo"
                 alt="A loving mirror photograph together"
                 initial={{
                   rotate: -6,
@@ -2125,6 +2284,7 @@ function App() {
 
           <section className="v2-final-night">
             <ShootingStars />
+            <Fireflies count={22} />
 
             <div className="v2-final-content">
               <motion.p

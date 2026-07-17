@@ -848,3 +848,192 @@ footer a {
     animation: none !important;
   }
 }
+
+
+/* =========================================
+   VERSION 4 — CINEMATIC POLISH
+========================================= */
+
+.v4-scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100000;
+  width: calc(var(--story-progress, 0) * 100%);
+  height: 3px;
+  pointer-events: none;
+  background: linear-gradient(90deg, #ff9eb9, #c94769, #8e5fd0);
+  box-shadow: 0 0 14px rgba(201, 71, 105, 0.55);
+  transition: width 80ms linear;
+}
+
+.v4-heart-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 99998;
+  width: 18px;
+  height: 18px;
+  pointer-events: none;
+  color: #d94f75;
+  font-size: 18px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 7px rgba(117, 37, 65, 0.25));
+}
+
+.v4-premium-photo,
+.v2-scrapbook-photo,
+.cinematic-photo-frame {
+  transition: transform 450ms cubic-bezier(.2,.8,.2,1),
+              filter 450ms ease,
+              box-shadow 450ms ease;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.v4-premium-photo:hover {
+  transform: perspective(900px) rotateX(1.8deg) rotateY(-2.5deg) translateY(-7px) scale(1.018) !important;
+  filter: saturate(1.05) contrast(1.025) drop-shadow(0 28px 35px rgba(74, 39, 49, 0.2));
+}
+
+.v2-scrapbook-photo:hover {
+  transform: perspective(900px) rotate(-1deg) rotateY(-4deg) translateY(-8px);
+  box-shadow: 0 28px 60px rgba(85, 53, 49, .25);
+}
+
+.v4-fireflies {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.v4-fireflies span {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  opacity: 0;
+  background: #fff3a8;
+  box-shadow: 0 0 8px #fff3a8, 0 0 18px rgba(255, 219, 112, .78);
+  animation: v4Firefly ease-in-out infinite;
+}
+
+@keyframes v4Firefly {
+  0%, 100% { opacity: 0; transform: translate(0, 8px) scale(.55); }
+  18% { opacity: .95; }
+  48% { opacity: .35; transform: translate(var(--firefly-drift), -22px) scale(1); }
+  72% { opacity: .85; transform: translate(calc(var(--firefly-drift) * -.45), -42px) scale(.72); }
+}
+
+.v4-cinematic-finale {
+  background:
+    radial-gradient(circle at 50% 44%, rgba(109, 48, 99, .32), transparent 32%),
+    linear-gradient(180deg, #05040d 0%, #0d0920 45%, #26132f 100%);
+}
+
+.v4-heartbeat-intro,
+.v4-love-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 9;
+  display: grid;
+  place-content: center;
+  place-items: center;
+  padding: 28px;
+  text-align: center;
+  pointer-events: none;
+}
+
+.v4-heartbeat-intro span {
+  color: #ff759a;
+  font-size: clamp(5rem, 18vw, 10rem);
+  filter: drop-shadow(0 0 34px rgba(255, 93, 140, .56));
+}
+
+.v4-heartbeat-intro p {
+  margin-top: 25px;
+  color: rgba(255, 240, 246, .9);
+  font-family: "Caveat", cursive;
+  font-size: clamp(1.45rem, 4vw, 2.35rem);
+}
+
+.v4-love-reveal {
+  grid-auto-flow: column;
+  gap: clamp(14px, 3vw, 36px);
+  color: white;
+  text-shadow: 0 0 35px rgba(255, 91, 139, .52);
+}
+
+.v4-love-reveal strong {
+  font-family: "Playfair Display", serif;
+  font-size: clamp(3rem, 11vw, 8.8rem);
+  line-height: .92;
+  letter-spacing: .01em;
+  white-space: nowrap;
+}
+
+.v4-love-reveal span {
+  font-size: clamp(2rem, 6vw, 5rem);
+}
+
+.v4-finale-story {
+  z-index: 10;
+}
+
+.v4-photo-shine {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.v4-photo-shine::after {
+  content: "";
+  position: absolute;
+  top: -30%;
+  left: -75%;
+  width: 42%;
+  height: 170%;
+  transform: rotate(18deg);
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.3), transparent);
+  animation: v4PhotoShine 5.5s 12s ease-in-out infinite;
+}
+
+@keyframes v4PhotoShine {
+  0%, 55% { left: -75%; opacity: 0; }
+  65% { opacity: 1; }
+  85%, 100% { left: 135%; opacity: 0; }
+}
+
+.v2-final-night .v2-final-content {
+  z-index: 5;
+}
+
+@media (max-width: 600px) {
+  .v4-love-reveal {
+    grid-auto-flow: row;
+    gap: 8px;
+  }
+
+  .v4-love-reveal strong {
+    white-space: normal;
+  }
+
+  .v4-love-reveal span:last-child {
+    display: none;
+  }
+}
+
+@media (pointer: coarse), (prefers-reduced-motion: reduce) {
+  .v4-heart-cursor { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v4-fireflies span,
+  .v4-photo-shine::after {
+    animation: none !important;
+  }
+}
