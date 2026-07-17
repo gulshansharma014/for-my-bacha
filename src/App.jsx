@@ -1068,7 +1068,7 @@ function App() {
       </motion.span>
 
       <span>
-        <strong>Our song?</strong>
+        <strong>Lets play some song?</strong>
         <small>Tap to make this moment even more special</small>
       </span>
 
