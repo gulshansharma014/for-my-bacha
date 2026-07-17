@@ -206,8 +206,18 @@ function App() {
   const [musicPlaying, setMusicPlaying] = useState(false);
   const [musicError, setMusicError] = useState(false);
 
+  const [isLoading, setIsLoading] = useState(true);
+  const [showMusicInvite, setShowMusicInvite] = useState(false);
   const audioRef = useRef(null);
   const microphoneCleanupRef = useRef(null);
+
+  useEffect(() => {
+  const loadingTimer = window.setTimeout(() => {
+    setIsLoading(false);
+  }, 2800);
+
+  return () => window.clearTimeout(loadingTimer);
+}, []);
 
   useEffect(() => {
     return () => {
@@ -216,40 +226,64 @@ function App() {
   }, []);
 
   const openEnvelope = () => {
-    setEnvelopeOpened(true);
+  setEnvelopeOpened(true);
+
+  window.setTimeout(() => {
+    setStoryStarted(true);
+    setShowMusicInvite(true);
 
     window.setTimeout(() => {
-      setStoryStarted(true);
-
-      window.setTimeout(() => {
-        document
-          .getElementById("story")
-          ?.scrollIntoView({ behavior: "smooth" });
-      }, 300);
-    }, 1000);
-  };
+      document
+        .getElementById("story")
+        ?.scrollIntoView({ behavior: "smooth" });
+    }, 300);
+  }, 1000);
+};
 
   const toggleMusic = async () => {
-    const audio = audioRef.current;
+  const audio = audioRef.current;
 
-    if (!audio) {
+  if (!audio) {
+    return;
+  }
+
+  try {
+    setMusicError(false);
+
+    if (musicPlaying) {
+      const fadeOut = window.setInterval(() => {
+        if (audio.volume > 0.08) {
+          audio.volume = Math.max(0, audio.volume - 0.08);
+          return;
+        }
+
+        window.clearInterval(fadeOut);
+        audio.pause();
+        audio.volume = 0.35;
+        setMusicPlaying(false);
+      }, 70);
+
       return;
     }
 
-    try {
-      setMusicError(false);
+    audio.volume = 0;
+    await audio.play();
 
-      if (musicPlaying) {
-        audio.pause();
-        setMusicPlaying(false);
-      } else {
-        await audio.play();
-        setMusicPlaying(true);
+    setMusicPlaying(true);
+    setShowMusicInvite(false);
+
+    const fadeIn = window.setInterval(() => {
+      if (audio.volume < 0.32) {
+        audio.volume = Math.min(0.35, audio.volume + 0.035);
+        return;
       }
-    } catch {
-      setMusicError(true);
-    }
-  };
+
+      window.clearInterval(fadeIn);
+    }, 90);
+  } catch {
+    setMusicError(true);
+  }
+};
 
   const changeScrapbookPage = (direction) => {
     setScrapbookPage((currentPage) => {
@@ -393,6 +427,68 @@ function App() {
 
   return (
     <main>
+      <AnimatePresence mode="wait">
+  {isLoading && (
+    <motion.div
+      className="romantic-loader"
+      initial={{ opacity: 1 }}
+      exit={{
+        opacity: 0,
+        scale: 1.05,
+        filter: "blur(8px)",
+      }}
+      transition={{ duration: 0.9, ease: "easeInOut" }}
+    >
+      <motion.div
+        className="loader-heart"
+        animate={{
+          scale: [1, 1.18, 1],
+        }}
+        transition={{
+          duration: 1.15,
+          repeat: Infinity,
+          ease: "easeInOut",
+        }}
+      >
+        ❤️
+      </motion.div>
+
+      <motion.p
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.35, duration: 0.7 }}
+      >
+        Preparing something special...
+      </motion.p>
+
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1.1, duration: 0.8 }}
+      >
+        Made with love by your
+        <strong> Nadan Boyfriend</strong>
+      </motion.span>
+
+      <div className="loader-dots">
+        {[0, 1, 2].map((dot) => (
+          <motion.i
+            key={dot}
+            animate={{
+              opacity: [0.25, 1, 0.25],
+              y: [0, -5, 0],
+            }}
+            transition={{
+              duration: 1,
+              repeat: Infinity,
+              delay: dot * 0.18,
+            }}
+          />
+        ))}
+      </div>
+    </motion.div>
+  )}
+</AnimatePresence>
       <style>{`
         .v2-envelope-stage {
           position: relative;
@@ -937,6 +1033,60 @@ function App() {
               </motion.div>
             )}
           </AnimatePresence>
+          {/* Music Invitation */}
+
+<AnimatePresence>
+  {showMusicInvite && storyStarted && !musicPlaying && (
+    <motion.button
+      type="button"
+      className="music-invitation"
+      onClick={toggleMusic}
+      initial={{
+        opacity: 0,
+        y: -20,
+        scale: 0.9,
+      }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: 1,
+      }}
+      exit={{
+        opacity: 0,
+        y: -15,
+        scale: 0.9,
+      }}
+    >
+      <motion.span
+        animate={{ rotate: [-8, 8, -8] }}
+        transition={{
+          duration: 1.5,
+          repeat: Infinity,
+        }}
+      >
+        🎵
+      </motion.span>
+
+      <span>
+        <strong>Our song?</strong>
+        <small>Tap to make this moment even more special</small>
+      </span>
+
+      <span className="music-invitation-arrow">
+        →
+      </span>
+    </motion.button>
+  )}
+</AnimatePresence>
+
+{/* Existing Music Button */}
+
+<button
+    className="music-toggle"
+    onClick={toggleMusic}
+>
+...
+</button>
 
           <motion.button
             className="v2-music-button"
