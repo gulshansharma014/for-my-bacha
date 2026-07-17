@@ -30,7 +30,7 @@ const timeline = [
   },
   {
     icon: "🙈",
-    title: "A very Nadan Boyfriend",
+    title: "A very Babuli",
     text: "I saw you, but I was too shy to properly talk to you.",
   },
   {
@@ -113,7 +113,7 @@ const promises = [
 const angryButtonTexts = [
   "I’m still angry 😤",
   "Arre Bacha… idhar nahi 😳",
-  "Your Nadan Boyfriend is scared 🏃",
+  "Your Babuli is scared 🏃",
   "Okay… you caught me 🥺",
 ];
 
@@ -346,7 +346,7 @@ function TypewriterLetter() {
           >
             Always yours,
             <br />
-            Your Nadan Boyfriend ❤️
+            Your Babuli ❤️
           </motion.p>
         )}
       </AnimatePresence>
@@ -362,7 +362,7 @@ function CinematicFinale({ onClose }) {
     "For staying.",
     "For trusting me.",
     "For choosing me.",
-    "For loving your Nadan Boyfriend.",
+    "For loving your Babuli.",
   ];
 
   return (
@@ -816,7 +816,7 @@ function App() {
         transition={{ delay: 1.1, duration: 0.8 }}
       >
         Made with love by your
-        <strong> Nadan Boyfriend</strong>
+        <strong> Babuli</strong>
       </motion.span>
 
       <div className="loader-dots">
@@ -1467,7 +1467,7 @@ function App() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
         >
-          Made by your Nadan Boyfriend, with a guilty heart, a lot of love and
+          Made by your Babuli, with a guilty heart, a lot of love and
           one promise to become better.
         </motion.p>
 
@@ -1541,7 +1541,7 @@ function App() {
             whileHover={{ scale: 1.04 }}
             whileTap={{ scale: 0.97 }}
           >
-            Open your Nadan Boyfriend’s heart 💌
+            Open your Babuli’s heart 💌
           </motion.button>
         )}
 
@@ -1979,7 +1979,7 @@ function App() {
                   <span>👀</span>
                   <h3>Your eyes</h3>
                   <p>
-                    They make your Nadan Boyfriend completely blind to everyone
+                    They make your Babuli completely blind to everyone
                     else.
                   </p>
                 </motion.article>
@@ -2073,7 +2073,7 @@ function App() {
               <p className="eyebrow">One small question</p>
 
               <h2>
-                Will you allow your Nadan Boyfriend to make it up to you?
+                Will you allow your Babuli to make it up to you?
               </h2>
 
               <div className="v2-angry-zone">
@@ -2120,7 +2120,7 @@ function App() {
                   }}
                 >
                   {escapeCount === 1 &&
-                    "Your Nadan Boyfriend is trying to escape 😳"}
+                    "Your Babuli is trying to escape 😳"}
 
                   {escapeCount === 2 &&
                     "Okay okay… bas ek chhoti si smile chahiye 🥺"}
@@ -2346,7 +2346,7 @@ function App() {
               >
                 I love you, my Bacha. ❤️
                 <br />
-                —Your Nadan Boyfriend
+                —Your Babuli
               </motion.p>
             </div>
           </section>
