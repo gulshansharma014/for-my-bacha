@@ -11,13 +11,18 @@ import mirrorPhoto from "./assets/mirror-photo.jpg";
 const reveal = {
   hidden: {
     opacity: 0,
-    y: 45,
+    y: 52,
+    scale: 0.985,
+    filter: "blur(9px)",
   },
   visible: {
     opacity: 1,
     y: 0,
+    scale: 1,
+    filter: "blur(0px)",
     transition: {
-      duration: 0.75,
+      duration: 0.9,
+      ease: [0.22, 1, 0.36, 1],
     },
   },
 };
@@ -116,6 +121,90 @@ const angryButtonTexts = [
   "Your Babuli is scared 🏃",
   "Okay… you caught me 🥺",
 ];
+
+function getTimeTheme(hour = new Date().getHours()) {
+  if (hour >= 6 && hour < 11) return "morning";
+  if (hour >= 11 && hour < 17) return "afternoon";
+  if (hour >= 17 && hour < 20) return "evening";
+  return "night";
+}
+
+function useCinematicEnvironment() {
+  const [timeTheme, setTimeTheme] = useState(() => getTimeTheme());
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const updateMotionPreference = () => setReducedMotion(media.matches);
+    const updateTheme = () => setTimeTheme(getTimeTheme());
+
+    updateMotionPreference();
+    updateTheme();
+
+    media.addEventListener?.("change", updateMotionPreference);
+    const themeTimer = window.setInterval(updateTheme, 60_000);
+
+    return () => {
+      media.removeEventListener?.("change", updateMotionPreference);
+      window.clearInterval(themeTimer);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (reducedMotion) return undefined;
+
+    let frameId = 0;
+    const updateParallax = () => {
+      frameId = 0;
+      const y = window.scrollY;
+      document.documentElement.style.setProperty("--parallax-slow", `${y * -0.035}px`);
+      document.documentElement.style.setProperty("--parallax-medium", `${y * -0.07}px`);
+      document.documentElement.style.setProperty("--parallax-fast", `${y * -0.11}px`);
+    };
+
+    const requestUpdate = () => {
+      if (!frameId) frameId = window.requestAnimationFrame(updateParallax);
+    };
+
+    updateParallax();
+    window.addEventListener("scroll", requestUpdate, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", requestUpdate);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+  }, [reducedMotion]);
+
+  return { timeTheme, reducedMotion };
+}
+
+function AmbientAtmosphere({ theme, reducedMotion }) {
+  const isNight = theme === "night";
+  const particleCount = reducedMotion ? 0 : isNight ? 22 : 9;
+
+  return (
+    <div className={`sprint1-atmosphere sprint1-atmosphere--${theme}`} aria-hidden="true">
+      <div className="sprint1-sky-layer sprint1-sky-layer--back" />
+      <div className="sprint1-sky-layer sprint1-sky-layer--middle" />
+      <div className="sprint1-sky-layer sprint1-sky-layer--front" />
+      {isNight && particleCount > 0 && <Fireflies count={particleCount} />}
+    </div>
+  );
+}
+
+function StoryProgress({ progress }) {
+  const percentage = Math.round(progress * 100);
+
+  return (
+    <div className="sprint1-progress" aria-label={`Story progress ${percentage}%`}>
+      <div className="sprint1-progress-track">
+        <div className="sprint1-progress-fill" />
+        <span className="sprint1-progress-heart" aria-hidden="true">♥</span>
+      </div>
+      <span className="sprint1-progress-number">{percentage}%</span>
+    </div>
+  );
+}
 
 function Section({ children, className = "", id }) {
   return (
@@ -476,6 +565,7 @@ function CinematicFinale({ onClose }) {
 }
 
 function App() {
+  const { timeTheme, reducedMotion } = useCinematicEnvironment();
   const [envelopeOpened, setEnvelopeOpened] = useState(false);
   const [storyStarted, setStoryStarted] = useState(false);
 
@@ -773,9 +863,14 @@ function App() {
   const scrapbookMemory = memories[scrapbookPage];
 
   return (
-    <main style={{ "--story-progress": scrollProgress }}>
+    <main
+      className={`sprint1-theme sprint1-theme--${timeTheme}`}
+      data-time-theme={timeTheme}
+      style={{ "--story-progress": scrollProgress }}
+    >
+      <AmbientAtmosphere theme={timeTheme} reducedMotion={reducedMotion} />
       <HeartCursor />
-      <div className="v4-scroll-progress" aria-hidden="true" />
+      <StoryProgress progress={scrollProgress} />
       <AnimatePresence mode="wait">
   {isLoading && (
     <motion.div
@@ -1440,9 +1535,18 @@ function App() {
         </div>
       )}
 
-      <section className="hero">
-        <div className="hero-glow hero-glow-one" />
-        <div className="hero-glow hero-glow-two" />
+      <section className="hero sprint1-parallax-stage">
+        <motion.div
+          className="sprint1-time-whisper"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 3.1, duration: 0.8 }}
+        >
+          <span aria-hidden="true">{timeTheme === "morning" ? "☀️" : timeTheme === "afternoon" ? "🌤️" : timeTheme === "evening" ? "🌇" : "🌙"}</span>
+          A little {timeTheme} magic for you
+        </motion.div>
+        <div className="hero-glow hero-glow-one sprint1-parallax-slow" />
+        <div className="hero-glow hero-glow-two sprint1-parallax-medium" />
 
         <motion.p
           className="tiny-label"
