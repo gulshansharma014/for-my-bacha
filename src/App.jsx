@@ -347,6 +347,122 @@ function HeartCursor() {
 }
 
 
+
+const jarMemories = [
+  "The first time your smile made me forget what I was saying.",
+  "Every evening when an ordinary day became one of my favourites.",
+  "The cake you made with more love than any bakery could ever add.",
+  "Every quiet walk where being beside you felt like enough.",
+  "The moment my best friend slowly became the person I wanted forever with.",
+  "Every silly argument that still ended with us choosing each other.",
+  "The hugs I always wished could last a little longer.",
+  "The future trips, late-night talks and tiny traditions still waiting for us.",
+];
+
+function TiltPhoto({ src, alt, className = "", children }) {
+  const ref = useRef(null);
+  const [style, setStyle] = useState({});
+
+  const handleMove = (event) => {
+    if (!window.matchMedia("(pointer: fine)").matches) return;
+    const rect = ref.current?.getBoundingClientRect();
+    if (!rect) return;
+    const x = (event.clientX - rect.left) / rect.width;
+    const y = (event.clientY - rect.top) / rect.height;
+    setStyle({
+      "--tilt-x": `${(0.5 - y) * 9}deg`,
+      "--tilt-y": `${(x - 0.5) * 11}deg`,
+      "--shine-x": `${x * 100}%`,
+      "--shine-y": `${y * 100}%`,
+    });
+  };
+
+  return (
+    <div
+      ref={ref}
+      className={`s2-tilt-photo ${className}`}
+      style={style}
+      onPointerMove={handleMove}
+      onPointerLeave={() => setStyle({})}
+    >
+      <img src={src} alt={alt} />
+      <span className="s2-tilt-shine" aria-hidden="true" />
+      {children}
+    </div>
+  );
+}
+
+function MemoryJar() {
+  const [index, setIndex] = useState(0);
+  const [opened, setOpened] = useState(false);
+
+  const drawMemory = () => {
+    setOpened(false);
+    window.setTimeout(() => {
+      setIndex((current) => (current + 1 + Math.floor(Math.random() * (jarMemories.length - 1))) % jarMemories.length);
+      setOpened(true);
+    }, 180);
+  };
+
+  return (
+    <div className="s2-memory-jar-layout">
+      <motion.button
+        type="button"
+        className="s2-memory-jar"
+        onClick={drawMemory}
+        whileTap={{ scale: 0.96 }}
+        aria-label="Draw a memory from the jar"
+      >
+        <span className="s2-jar-lid" />
+        <span className="s2-jar-glass">
+          {Array.from({ length: 9 }, (_, i) => <i key={i} style={{ "--i": i }} />)}
+        </span>
+        <strong>Our memories</strong>
+        <small>Tap the jar</small>
+      </motion.button>
+
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`${index}-${opened}`}
+          className="s2-memory-note"
+          initial={{ opacity: 0, y: 28, rotate: -3, scale: 0.92 }}
+          animate={{ opacity: opened ? 1 : 0.72, y: 0, rotate: opened ? 1 : -2, scale: 1 }}
+          exit={{ opacity: 0, y: -18, rotate: 3 }}
+        >
+          <span>♥</span>
+          <p>{opened ? jarMemories[index] : "There are so many little moments inside us. Pick one."}</p>
+          <button type="button" onClick={drawMemory}>Pick another memory</button>
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+}
+
+function RelationshipCounter() {
+  const items = [
+    ["∞", "Laughs shared"],
+    ["Growing", "Adventures"],
+    ["A few", "Arguments survived"],
+    ["Every day", "Love chosen"],
+  ];
+  return (
+    <div className="s2-counter-grid">
+      {items.map(([value, label], index) => (
+        <motion.article
+          key={label}
+          initial={{ opacity: 0, y: 30, scale: 0.92 }}
+          whileInView={{ opacity: 1, y: 0, scale: 1 }}
+          viewport={{ once: true, amount: 0.4 }}
+          transition={{ delay: index * 0.12, duration: 0.65 }}
+        >
+          <strong>{value}</strong>
+          <span>{label}</span>
+        </motion.article>
+      ))}
+    </div>
+  );
+}
+
 const letterParagraphs = [
   "I am truly sorry—not only because you became upset, but because I understand why my words hurt you.",
   "You trusted me with your love, emotions, closeness and the most vulnerable parts of yourself. That trust should always feel safe with me.",
@@ -1738,7 +1854,8 @@ function App() {
                 <h2>From a shy beginning to becoming home</h2>
               </div>
 
-              <div className="timeline">
+              <div className="timeline s2-timeline">
+                <motion.div className="s2-timeline-progress" initial={{ scaleY: 0 }} whileInView={{ scaleY: 1 }} viewport={{ once: true, amount: 0.15 }} transition={{ duration: 2.1, ease: "easeOut" }} />
                 {timeline.map((item, index) => (
                   <motion.div
                     className="timeline-item"
@@ -1917,12 +2034,11 @@ function App() {
                       duration: 0.55,
                     }}
                   >
-                    <div className="v2-scrapbook-photo">
-                      <img
-                        src={scrapbookMemory.image}
-                        alt={scrapbookMemory.title}
-                      />
-                    </div>
+                    <TiltPhoto
+                      src={scrapbookMemory.image}
+                      alt={scrapbookMemory.title}
+                      className="v2-scrapbook-photo s2-scrapbook-photo"
+                    />
 
                     <div>
                       <p className="eyebrow">{scrapbookMemory.eyebrow}</p>
@@ -1957,6 +2073,25 @@ function App() {
                   ))}
                 </div>
               </div>
+            </div>
+          </Section>
+
+          <Section className="s2-memory-jar-section">
+            <div className="content">
+              <div className="section-heading centered">
+                <p className="eyebrow">A jar full of us</p>
+                <h2>Pull out one tiny memory at a time</h2>
+                <p>Some moments are too precious to leave only in the past.</p>
+              </div>
+              <MemoryJar />
+            </div>
+          </Section>
+
+          <Section className="s2-counter-section">
+            <div className="content centered">
+              <p className="eyebrow">Us, in numbers</p>
+              <h2>Some things were never meant to be counted</h2>
+              <RelationshipCounter />
             </div>
           </Section>
 
